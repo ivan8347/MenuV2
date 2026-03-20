@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рецепт</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{RecipeName}}</h1>
+    <p><strong>Источник:</strong> {{Source}}</p>
+    <h2>Ингредиенты</h2>
+    <table>
+        <tr>
+            <th>Продукт</th>
+            <th>Количество</th>
+            <th>Ккал</th>
+            <th>ХЕ</th>
+            <th>Цена</th>
+        </tr>
+        {{IngredientsTableRows}}
+    </table>
+
+    <h2>Шаги приготовления</h2>
+    <p>{{Instructions}}</p>
+</body>
+</html>
