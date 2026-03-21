@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using MenuV2.Core;
+using System.Windows.Forms;
 
 namespace MenuV2.Services
 {
@@ -35,10 +36,6 @@ namespace MenuV2.Services
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
             var json = JsonConvert.SerializeObject(_products, Newtonsoft.Json.Formatting.Indented);
-
-           
-
-
             File.WriteAllText(FilePath, json);
         }
 
