@@ -10,7 +10,8 @@ namespace MenuV2.Services
 {
     public static class ProductStorage
     {
-        private static readonly string FilePath = Path.Combine("Data", "products.json");
+        private const string FilePath = "DATA/products.json";
+
 
         private static List<Product> _products = new List<Product>();
 

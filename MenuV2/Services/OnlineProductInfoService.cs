@@ -1,46 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MenuV2.Core;
 
 namespace MenuV2.Services
 {
-    public static class OnlineProductInfoService
+    public class OnlineProductInfoService
     {
-        // Основной метод: получить продукт из интернета или кэша
-        public static async Task<Product> GetProductInfoAsync(string name)
+        private static string NormalizeName(string name)
         {
-            // 1. Проверяем кэш
-            var cached = ProductStorage.Find(name);
-            if (cached != null && ProductStorage.IsFresh(cached)) 
-            { 
-                return cached; 
-            }
+            return name?.Trim().ToLower();
+        }
 
-            // 2. Ищем в интернете
-            var online = await FetchFromInternetAsync(name);
-            if (online != null)
+        public Product GetProductInfo(string name)
+        {
+            var normalized = NormalizeName(name);
+
+            var info = NutrientsStorage.Find(normalized);
+            if (info == null)
+                return null;
+
+            return new Product
             {
-                online.UpdatedAt = DateTime.Now;
-                ProductStorage.AddOrUpdate(online);
-                return online;
-            }
-            // 3. Если ничего не нашли — возвращаем null
-            return null;
+                Name = normalized,
+                Protein = info.Protein,
+                Fat = info.Fat,
+                Carbs = info.Carbs,
+                Calories = info.Calories,
+                BreadUnits = info.Carbs / 12.0,
+                //ручное заполнение
+                Store = "NutrientsStorage",
+                PricePerKg = 0,
+                UpdatedAt = DateTime.Now
+            };
         }
-
-            // Заглушка — здесь будет интернет‑логика
-        private static async Task<Product> FetchFromInternetAsync(string name)
-        {
-            await Task.Delay(200); // имитация запроса
-
-            // Пока возвращаем null — позже добавим реальный парсинг
-            return null;
-        }
-
     }
 
-}
 
+}
