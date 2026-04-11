@@ -16,6 +16,8 @@ namespace MenuV2.Core
         public double Fat { get; set; }
         public double Carbs { get; set; }
         public double BreadUnits { get; set; }
+        public string OriginalText { get; set; }
+
 
         public Ingredient(string name, double weight, Product product)
         {
@@ -32,6 +34,19 @@ namespace MenuV2.Core
 
         }
         public Ingredient() { }   // ← добавить
+
+        public void SetWeight(double newWeight, Product product)
+        {
+            Weight = newWeight;
+
+            double factor = Weight / 100.0;
+
+            Calories = product.Calories * factor;
+            Protein = product.Protein * factor;
+            Fat = product.Fat * factor;
+            Carbs = product.Carbs * factor;
+            BreadUnits = product.BreadUnits * factor;
+        }
 
     }
 }

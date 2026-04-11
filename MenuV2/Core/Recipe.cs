@@ -11,6 +11,11 @@ namespace MenuV2.Core
     public class Recipe
     {
         public string Name { get; set; }
+        public string PhotoPath { get; set; }
+        public string VideoUrl { get; set; }
+        public string Instructions { get; set; }
+        public string Category { get; set; }
+
         public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
           public double TotalCalories => Ingredients.Sum(i => i.Calories);
           public double TotalProtein => Ingredients.Sum(i => i.Protein);
