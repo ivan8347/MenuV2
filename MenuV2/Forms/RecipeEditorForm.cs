@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using MenuV2.Core;
 using MenuV2.Services;
@@ -15,9 +16,22 @@ namespace MenuV2.Forms
         public RecipeEditorForm(Recipe recipe)
         {
             InitializeComponent();
+
+            // Размер формы под экран
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.WindowState = FormWindowState.Normal;
+
+            this.ClientSize = new Size(
+                (int)(Screen.PrimaryScreen.WorkingArea.Width * 0.8),
+                (int)(Screen.PrimaryScreen.WorkingArea.Height * 0.8)
+            );
+
+            this.MaximumSize = Screen.PrimaryScreen.WorkingArea.Size;
+
             _recipe = recipe;
             LoadRecipe();
         }
+
 
         private void LoadRecipe()
         {
@@ -30,16 +44,12 @@ namespace MenuV2.Forms
             txtIngredients.Text = "";
             foreach (var ing in _recipe.Ingredients)
             {
-                // Вариант 1 — оригинальный текст + граммы
-
-                txtIngredients.AppendText
-               (
-                 $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
+                txtIngredients.AppendText(
+                    $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
                 );
             }
 
-
-
+            // Фото
             if (!string.IsNullOrEmpty(_recipe.PhotoPath) && File.Exists(_recipe.PhotoPath))
             {
                 picPhoto.Image = Image.FromFile(_recipe.PhotoPath);
@@ -98,14 +108,13 @@ namespace MenuV2.Forms
 
             txtIngredients.Text = "";
             foreach (var ing in recipe.Ingredients)
-                txtIngredients.AppendText($"{ing.Name} — {ing.Weight} г\n");
+                txtIngredients.AppendText($"{ing.Name} — {ing.Weight} г{Environment.NewLine}");
         }
 
         private void btnParseIngredients_Click(object sender, EventArgs e)
         {
-            var items = IngredientParser.FromText(txtInstructions.Text);
-
-            txtIngredients.Text = ""; // очищаем
+            // Парсим ИЗ ПОЛЯ ИНГРЕДИЕНТОВ, а не из инструкции
+            var items = IngredientParser.FromText(txtIngredients.Text);
 
             txtIngredients.Text = "";
             foreach (var ing in items)
@@ -114,9 +123,7 @@ namespace MenuV2.Forms
                     $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
                 );
             }
-
         }
-
 
         private void btnSave_Click(object sender, EventArgs e)
         {

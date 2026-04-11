@@ -21,22 +21,42 @@ namespace MenuV2.Services
         public static void Load()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+
             if (!File.Exists(FilePath))
             {
+                File.WriteAllText(FilePath, "[]");
                 _products = new List<Product>();
-                Save();
                 return;
             }
 
             var json = File.ReadAllText(FilePath);
-            _products = JsonConvert.DeserializeObject<List<Product>>(json) ?? new List<Product>();
+
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                _products = new List<Product>();
+                return;
+            }
+
+            try
+            {
+                _products = JsonConvert.DeserializeObject<List<Product>>(json)
+                            ?? new List<Product>();
+            }
+            catch
+            {
+                MessageBox.Show("Ошибка чтения products.json — файл повреждён.");
+                _products = new List<Product>();
+            }
         }
+
+
 
         // Сохраняем JSON
         public static void Save()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-            var json = JsonConvert.SerializeObject(_products, Newtonsoft.Json.Formatting.Indented);
+
+            var json = JsonConvert.SerializeObject(_products, Formatting.Indented);
             File.WriteAllText(FilePath, json);
         }
 

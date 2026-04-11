@@ -51,141 +51,149 @@
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(20, 40);
+            this.txtName.Location = new System.Drawing.Point(20, 55);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(350, 22);
+            this.txtName.Size = new System.Drawing.Size(380, 39);
             this.txtName.TabIndex = 0;
             // 
             // picPhoto
             // 
             this.picPhoto.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picPhoto.Location = new System.Drawing.Point(525, 40);
+            this.picPhoto.Location = new System.Drawing.Point(655, 12);
             this.picPhoto.Name = "picPhoto";
-            this.picPhoto.Size = new System.Drawing.Size(200, 200);
+            this.picPhoto.Size = new System.Drawing.Size(250, 250);
             this.picPhoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picPhoto.TabIndex = 2;
             this.picPhoto.TabStop = false;
             // 
             // btnSelectPhoto
             // 
-            this.btnSelectPhoto.Location = new System.Drawing.Point(400, 230);
+            this.btnSelectPhoto.Location = new System.Drawing.Point(655, 277);
             this.btnSelectPhoto.Name = "btnSelectPhoto";
-            this.btnSelectPhoto.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectPhoto.Size = new System.Drawing.Size(250, 40);
             this.btnSelectPhoto.TabIndex = 3;
             this.btnSelectPhoto.Text = "Выбрать фото";
             this.btnSelectPhoto.Click += new System.EventHandler(this.btnSelectPhoto_Click);
             // 
             // txtVideo
             // 
-            this.txtVideo.Location = new System.Drawing.Point(20, 100);
+            this.txtVideo.Location = new System.Drawing.Point(20, 135);
             this.txtVideo.Name = "txtVideo";
-            this.txtVideo.Size = new System.Drawing.Size(350, 22);
+            this.txtVideo.Size = new System.Drawing.Size(380, 39);
             this.txtVideo.TabIndex = 4;
             // 
             // btnLoadYoutube
             // 
-            this.btnLoadYoutube.Location = new System.Drawing.Point(380, 100);
+            this.btnLoadYoutube.AutoSize = true;
+            this.btnLoadYoutube.Location = new System.Drawing.Point(410, 135);
             this.btnLoadYoutube.Name = "btnLoadYoutube";
-            this.btnLoadYoutube.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadYoutube.Size = new System.Drawing.Size(131, 42);
             this.btnLoadYoutube.TabIndex = 6;
             this.btnLoadYoutube.Text = "Загрузить";
             this.btnLoadYoutube.Click += new System.EventHandler(this.btnLoadYoutube_Click);
             // 
             // txtInstructions
             // 
-            this.txtInstructions.Location = new System.Drawing.Point(20, 220);
+            this.txtInstructions.Location = new System.Drawing.Point(20, 300);
             this.txtInstructions.Multiline = true;
             this.txtInstructions.Name = "txtInstructions";
             this.txtInstructions.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInstructions.Size = new System.Drawing.Size(350, 180);
+            this.txtInstructions.Size = new System.Drawing.Size(380, 200);
             this.txtInstructions.TabIndex = 9;
             // 
             // txtIngredients
             // 
-            this.txtIngredients.Location = new System.Drawing.Point(20, 430);
+            this.txtIngredients.Location = new System.Drawing.Point(20, 550);
             this.txtIngredients.Multiline = true;
             this.txtIngredients.Name = "txtIngredients";
             this.txtIngredients.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtIngredients.Size = new System.Drawing.Size(350, 180);
+            this.txtIngredients.Size = new System.Drawing.Size(380, 200);
             this.txtIngredients.TabIndex = 11;
             // 
             // btnParseIngredients
             // 
-            this.btnParseIngredients.Location = new System.Drawing.Point(380, 430);
+            this.btnParseIngredients.AutoSize = true;
+            this.btnParseIngredients.Location = new System.Drawing.Point(410, 550);
             this.btnParseIngredients.Name = "btnParseIngredients";
-            this.btnParseIngredients.Size = new System.Drawing.Size(75, 23);
+            this.btnParseIngredients.Size = new System.Drawing.Size(120, 42);
             this.btnParseIngredients.TabIndex = 13;
             this.btnParseIngredients.Text = "Парсить";
             this.btnParseIngredients.Click += new System.EventHandler(this.btnParseIngredients_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(20, 630);
+            this.btnSave.Location = new System.Drawing.Point(20, 770);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(140, 40);
             this.btnSave.TabIndex = 14;
             this.btnSave.Text = "Сохранить";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(150, 630);
+            this.btnCancel.Location = new System.Drawing.Point(180, 770);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(140, 40);
             this.btnCancel.TabIndex = 15;
             this.btnCancel.Text = "Отмена";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // lblName
             // 
+            this.lblName.AutoSize = true;
             this.lblName.Location = new System.Drawing.Point(20, 20);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(100, 23);
+            this.lblName.Size = new System.Drawing.Size(125, 32);
             this.lblName.TabIndex = 1;
             this.lblName.Text = "Название:";
             // 
             // lblVideo
             // 
-            this.lblVideo.Location = new System.Drawing.Point(20, 80);
+            this.lblVideo.AutoSize = true;
+            this.lblVideo.Location = new System.Drawing.Point(20, 105);
             this.lblVideo.Name = "lblVideo";
-            this.lblVideo.Size = new System.Drawing.Size(100, 23);
+            this.lblVideo.Size = new System.Drawing.Size(87, 32);
             this.lblVideo.TabIndex = 5;
             this.lblVideo.Text = "Видео:";
             // 
             // lblInstructions
             // 
-            this.lblInstructions.Location = new System.Drawing.Point(20, 200);
+            this.lblInstructions.AutoSize = true;
+            this.lblInstructions.Location = new System.Drawing.Point(20, 265);
             this.lblInstructions.Name = "lblInstructions";
-            this.lblInstructions.Size = new System.Drawing.Size(100, 23);
+            this.lblInstructions.Size = new System.Drawing.Size(276, 32);
             this.lblInstructions.TabIndex = 10;
-            this.lblInstructions.Text = "Инструкция:";
+            this.lblInstructions.Text = "Способ приготовления:";
             // 
             // lblIngredients
             // 
-            this.lblIngredients.Location = new System.Drawing.Point(20, 410);
+            this.lblIngredients.AutoSize = true;
+            this.lblIngredients.Location = new System.Drawing.Point(20, 515);
             this.lblIngredients.Name = "lblIngredients";
-            this.lblIngredients.Size = new System.Drawing.Size(100, 23);
+            this.lblIngredients.Size = new System.Drawing.Size(168, 32);
             this.lblIngredients.TabIndex = 12;
             this.lblIngredients.Text = "Ингредиенты:";
             // 
             // lblCategory
             // 
-            this.lblCategory.Location = new System.Drawing.Point(20, 140);
+            this.lblCategory.AutoSize = true;
+            this.lblCategory.Location = new System.Drawing.Point(20, 185);
             this.lblCategory.Name = "lblCategory";
-            this.lblCategory.Size = new System.Drawing.Size(100, 23);
+            this.lblCategory.Size = new System.Drawing.Size(131, 32);
             this.lblCategory.TabIndex = 8;
             this.lblCategory.Text = "Категория:";
             // 
             // txtCategory
             // 
-            this.txtCategory.Location = new System.Drawing.Point(20, 160);
+            this.txtCategory.Location = new System.Drawing.Point(20, 215);
             this.txtCategory.Name = "txtCategory";
-            this.txtCategory.Size = new System.Drawing.Size(350, 22);
+            this.txtCategory.Size = new System.Drawing.Size(380, 39);
             this.txtCategory.TabIndex = 7;
             // 
             // RecipeEditorForm
             // 
-            this.ClientSize = new System.Drawing.Size(742, 680);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(917, 840);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.picPhoto);
@@ -202,6 +210,7 @@
             this.Controls.Add(this.btnParseIngredients);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnCancel);
+            this.Font = new System.Drawing.Font("Segoe UI", 14F);
             this.Name = "RecipeEditorForm";
             this.Text = "Редактор рецепта";
             ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).EndInit();
