@@ -59,7 +59,7 @@
             // picPhoto
             // 
             this.picPhoto.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picPhoto.Location = new System.Drawing.Point(655, 12);
+            this.picPhoto.Location = new System.Drawing.Point(633, 4);
             this.picPhoto.Name = "picPhoto";
             this.picPhoto.Size = new System.Drawing.Size(250, 250);
             this.picPhoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -68,7 +68,7 @@
             // 
             // btnSelectPhoto
             // 
-            this.btnSelectPhoto.Location = new System.Drawing.Point(655, 277);
+            this.btnSelectPhoto.Location = new System.Drawing.Point(377, 4);
             this.btnSelectPhoto.Name = "btnSelectPhoto";
             this.btnSelectPhoto.Size = new System.Drawing.Size(250, 40);
             this.btnSelectPhoto.TabIndex = 3;
@@ -85,7 +85,7 @@
             // btnLoadYoutube
             // 
             this.btnLoadYoutube.AutoSize = true;
-            this.btnLoadYoutube.Location = new System.Drawing.Point(410, 135);
+            this.btnLoadYoutube.Location = new System.Drawing.Point(456, 132);
             this.btnLoadYoutube.Name = "btnLoadYoutube";
             this.btnLoadYoutube.Size = new System.Drawing.Size(131, 42);
             this.btnLoadYoutube.TabIndex = 6;
@@ -94,26 +94,26 @@
             // 
             // txtInstructions
             // 
-            this.txtInstructions.Location = new System.Drawing.Point(20, 300);
+            this.txtInstructions.Location = new System.Drawing.Point(26, 312);
             this.txtInstructions.Multiline = true;
             this.txtInstructions.Name = "txtInstructions";
             this.txtInstructions.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInstructions.Size = new System.Drawing.Size(380, 200);
+            this.txtInstructions.Size = new System.Drawing.Size(380, 439);
             this.txtInstructions.TabIndex = 9;
             // 
             // txtIngredients
             // 
-            this.txtIngredients.Location = new System.Drawing.Point(20, 550);
+            this.txtIngredients.Location = new System.Drawing.Point(633, 312);
             this.txtIngredients.Multiline = true;
             this.txtIngredients.Name = "txtIngredients";
             this.txtIngredients.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtIngredients.Size = new System.Drawing.Size(380, 200);
+            this.txtIngredients.Size = new System.Drawing.Size(380, 439);
             this.txtIngredients.TabIndex = 11;
             // 
             // btnParseIngredients
             // 
             this.btnParseIngredients.AutoSize = true;
-            this.btnParseIngredients.Location = new System.Drawing.Point(410, 550);
+            this.btnParseIngredients.Location = new System.Drawing.Point(456, 371);
             this.btnParseIngredients.Name = "btnParseIngredients";
             this.btnParseIngredients.Size = new System.Drawing.Size(120, 42);
             this.btnParseIngredients.TabIndex = 13;
@@ -122,7 +122,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(20, 770);
+            this.btnSave.Location = new System.Drawing.Point(456, 435);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(140, 40);
             this.btnSave.TabIndex = 14;
@@ -131,7 +131,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(180, 770);
+            this.btnCancel.Location = new System.Drawing.Point(456, 495);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(140, 40);
             this.btnCancel.TabIndex = 15;
@@ -159,7 +159,7 @@
             // lblInstructions
             // 
             this.lblInstructions.AutoSize = true;
-            this.lblInstructions.Location = new System.Drawing.Point(20, 265);
+            this.lblInstructions.Location = new System.Drawing.Point(20, 266);
             this.lblInstructions.Name = "lblInstructions";
             this.lblInstructions.Size = new System.Drawing.Size(276, 32);
             this.lblInstructions.TabIndex = 10;
@@ -168,7 +168,7 @@
             // lblIngredients
             // 
             this.lblIngredients.AutoSize = true;
-            this.lblIngredients.Location = new System.Drawing.Point(20, 515);
+            this.lblIngredients.Location = new System.Drawing.Point(641, 266);
             this.lblIngredients.Name = "lblIngredients";
             this.lblIngredients.Size = new System.Drawing.Size(168, 32);
             this.lblIngredients.TabIndex = 12;
@@ -193,7 +193,7 @@
             // RecipeEditorForm
             // 
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(917, 840);
+            this.ClientSize = new System.Drawing.Size(1025, 840);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.picPhoto);

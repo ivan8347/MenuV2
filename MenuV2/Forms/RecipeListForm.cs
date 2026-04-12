@@ -24,7 +24,7 @@ namespace MenuV2.Forms
         {
             try
             {
-                var service = new YouTubeService("ТВОЙ_API_KEY");
+                var service = new YouTubeService("AIzaSyCYQPqDOFD99Aven7RknPBtXFrOZm95Yfc");
                 var recipe = await service.LoadRecipeFromYoutube(url);
 
                 if (recipe == null)
@@ -48,26 +48,26 @@ namespace MenuV2.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            string text = Clipboard.ContainsText() ? Clipboard.GetText().Trim() : "";
+            string clipboard = Clipboard.GetText()?.Trim();
 
-            // Если в буфере есть YouTube‑ссылка → загружаем рецепт
-            if (text.Contains("youtu.be") || text.Contains("youtube.com/watch"))
+            // Если в буфере YouTube — загружаем онлайн через API
+            if (!string.IsNullOrEmpty(clipboard) &&
+                (clipboard.Contains("youtube.com") || clipboard.Contains("youtu.be")))
             {
-                LoadYouTubeRecipe(text);
+                LoadYouTubeRecipe(clipboard);
                 return;
             }
 
-            // Иначе создаём пустой рецепт
-            var recipe = new Recipe("Новый рецепт");
-            RecipeStorage.Add(recipe);
-
-            var editor = new RecipeEditorForm(recipe);
-            if (editor.ShowDialog() == DialogResult.OK)
+            // Обычное добавление
+            var form = new RecipeEditorForm();
+            if (form.ShowDialog() == DialogResult.OK)
             {
+                RecipeStorage.Add(form.Recipe);
                 RecipeStorage.Save();
                 LoadRecipes();
             }
         }
+
 
         private void btnEdit_Click(object sender, EventArgs e)
         {

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MenuV2.Core;
 using MenuV2.Services;
@@ -10,14 +12,31 @@ namespace MenuV2.Forms
 {
     public partial class RecipeEditorForm : Form
     {
-        private Recipe _recipe;
+        public Recipe Recipe { get; private set; }
         private string _photoPath;
 
+        // Конструктор для нового рецепта
+        public RecipeEditorForm()
+        {
+            InitializeComponent();
+            InitWindow();
+
+            Recipe = new Recipe();
+            LoadRecipe();
+        }
+
+        // Конструктор для редактирования существующего рецепта
         public RecipeEditorForm(Recipe recipe)
         {
             InitializeComponent();
+            InitWindow();
 
-            // Размер формы под экран
+            Recipe = recipe;
+            LoadRecipe();
+        }
+
+        private void InitWindow()
+        {
             this.StartPosition = FormStartPosition.CenterScreen;
             this.WindowState = FormWindowState.Normal;
 
@@ -27,33 +46,26 @@ namespace MenuV2.Forms
             );
 
             this.MaximumSize = Screen.PrimaryScreen.WorkingArea.Size;
-
-            _recipe = recipe;
-            LoadRecipe();
         }
-
 
         private void LoadRecipe()
         {
-            txtName.Text = _recipe.Name;
-            txtInstructions.Text = _recipe.Instructions;
-            txtVideo.Text = _recipe.VideoUrl;
-            txtCategory.Text = _recipe.Category;
+            txtName.Text = Recipe.Name;
+            txtInstructions.Text = Recipe.Instructions;
+            txtVideo.Text = Recipe.VideoUrl;
+            txtCategory.Text = Recipe.Category;
 
-            // Ингредиенты → в текстовое поле
             txtIngredients.Text = "";
-            foreach (var ing in _recipe.Ingredients)
-            {
-                txtIngredients.AppendText(
-                    $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
-                );
-            }
+            foreach (var ing in Recipe.Ingredients)
+                txtIngredients.AppendText($"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}");
 
-            // Фото
-            if (!string.IsNullOrEmpty(_recipe.PhotoPath) && File.Exists(_recipe.PhotoPath))
+            if (!string.IsNullOrEmpty(Recipe.PhotoPath) && File.Exists(Recipe.PhotoPath))
             {
-                picPhoto.Image = Image.FromFile(_recipe.PhotoPath);
-                _photoPath = _recipe.PhotoPath;
+                using (var img = Image.FromFile(Recipe.PhotoPath))
+                {
+                    picPhoto.Image = new Bitmap(img);
+                }
+                _photoPath = Recipe.PhotoPath;
             }
         }
 
@@ -72,8 +84,12 @@ namespace MenuV2.Forms
 
                     File.Copy(dlg.FileName, destPath, true);
 
-                    _photoPath = destPath;
-                    picPhoto.Image = Image.FromFile(destPath);
+                    _photoPath = Path.GetFullPath(destPath);
+
+                    using (var img = Image.FromFile(_photoPath))
+                    {
+                        picPhoto.Image = new Bitmap(img);
+                    }
                 }
             }
         }
@@ -96,26 +112,25 @@ namespace MenuV2.Forms
                 return;
             }
 
-            txtName.Text = recipe.Name;
-            txtInstructions.Text = recipe.Instructions;
-            txtVideo.Text = recipe.VideoUrl;
+            // Обновляем форму (БЕЗ автосохранения)
+            Recipe.Name = recipe.Name;
+            Recipe.Instructions = recipe.Instructions;
+            Recipe.VideoUrl = recipe.VideoUrl;
+            Recipe.PhotoPath = recipe.PhotoPath;
+            Recipe.Category = recipe.Category;
 
-            if (recipe.PhotoPath != null)
-            {
-                picPhoto.Image = Image.FromFile(recipe.PhotoPath);
-                _photoPath = recipe.PhotoPath;
-            }
-
-            txtIngredients.Text = "";
+            Recipe.Ingredients.Clear();
             foreach (var ing in recipe.Ingredients)
-                txtIngredients.AppendText($"{ing.Name} — {ing.Weight} г{Environment.NewLine}");
+                Recipe.Ingredients.Add(ing);
+
+            LoadRecipe();
         }
 
         private void btnParseIngredients_Click(object sender, EventArgs e)
         {
-            // Парсим ИЗ ПОЛЯ ИНГРЕДИЕНТОВ, а не из инструкции
-            var items = IngredientParser.FromText(txtIngredients.Text);
+            var items = IngredientParser.FromText(txtInstructions.Text);
 
+            // 1. Заполняем ингредиенты
             txtIngredients.Text = "";
             foreach (var ing in items)
             {
@@ -123,22 +138,69 @@ namespace MenuV2.Forms
                     $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
                 );
             }
+
+            // 2. Удаляем ингредиенты из инструкции
+            var lines = txtInstructions.Text
+                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var cleaned = new List<string>();
+
+            foreach (var line in lines)
+            {
+                string l = line.Trim().ToLower();
+                bool isIngredient = false;
+
+                // 1. Если строка совпадает с найденным ингредиентом
+                foreach (var ing in items)
+                {
+                    if (l.Contains(ing.OriginalText.ToLower()))
+                    {
+                        isIngredient = true;
+                        break;
+                    }
+                }
+
+                // 2. Если строка содержит число И единицу измерения
+                bool hasDigit = Regex.IsMatch(l, @"\d");
+                bool hasUnit = Regex.IsMatch(l, @"\b(г|гр|грамм|кг|мл|л|ст\.л|ч\.л|шт|стакан)\b");
+
+                if (hasDigit && hasUnit)
+                    isIngredient = true;
+
+                // 3. Если строка содержит словесную меру (по вкусу, щепотка…)
+                foreach (var kv in IngredientParser.WordAmountsKeys)
+                {
+                    if (l.Contains(kv))
+                    {
+                        isIngredient = true;
+                        break;
+                    }
+                }
+
+                if (!isIngredient)
+                    cleaned.Add(line);
+
+            }
+
+            txtInstructions.Text = string.Join(Environment.NewLine, cleaned);
         }
+
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _recipe.Name = txtName.Text;
-            _recipe.Instructions = txtInstructions.Text;
-            _recipe.VideoUrl = txtVideo.Text;
-            _recipe.PhotoPath = _photoPath;
-            _recipe.Category = txtCategory.Text;
+            // Сохраняем только по кнопке
+            Recipe.Name = txtName.Text;
+            Recipe.Instructions = txtInstructions.Text;
+            Recipe.VideoUrl = txtVideo.Text;
+            Recipe.PhotoPath = _photoPath;
+            Recipe.Category = txtCategory.Text;
 
-            // Перезаписываем ингредиенты
-            _recipe.Ingredients.Clear();
-
+            Recipe.Ingredients.Clear();
             var parsed = IngredientParser.FromText(txtIngredients.Text);
             foreach (var ing in parsed)
-                _recipe.Ingredients.Add(ing);
+                Recipe.Ingredients.Add(ing);
+
+            RecipeStorage.Save();
 
             DialogResult = DialogResult.OK;
             Close();

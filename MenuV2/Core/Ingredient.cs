@@ -17,6 +17,8 @@ namespace MenuV2.Core
         public double Carbs { get; set; }
         public double BreadUnits { get; set; }
         public string OriginalText { get; set; }
+      
+
 
 
         public Ingredient(string name, double weight, Product product)

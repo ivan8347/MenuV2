@@ -7,29 +7,23 @@ namespace MenuV2.Services
 {
     public static class IngredientParser
     {
-        // Словесные количества → граммы
-        private static readonly Dictionary<string, double> WordAmounts = new Dictionary<string, double>
-        {
-            { "щепотка", 1 },
-            { "щепотки", 1 },
-            { "на кончике ножа", 1 },
-            { "по вкусу", 1 },
+        public static IEnumerable<string> WordAmountsKeys => WordAmounts.Keys;
 
-            { "горсть", 30 },
-            { "горсти", 30 },
 
-            { "капля", 0.05 },
-            { "капли", 0.05 },
-
-            { "веточка", 3 },
-            { "веточки", 3 },
-
-            { "пучок", 30 },
-            { "пучка", 30 },
-
-            { "кусочек", 20 },
-            { "кусочка", 20 }
-        };
+        // Словесные количества
+        private static readonly Dictionary<string, double> WordAmounts =
+            new Dictionary<string, double>
+            {
+                { "щепотка", 1 },
+                { "щепотки", 1 },
+                { "пучок", 30 },
+                { "пучка", 30 },
+                { "веточка", 3 },
+                { "веточки", 3 },
+                { "кусочек", 20 },
+                { "кусочка", 20 },
+                { "по вкусу", 1 }
+            };
 
         public static List<Ingredient> FromText(string text)
         {
@@ -40,63 +34,56 @@ namespace MenuV2.Services
 
             var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var rawLine in lines)
+            foreach (var raw in lines)
             {
-                string line = rawLine.Trim().ToLower();
+                string line = raw.Trim().ToLower();
 
                 if (line.Length < 2)
                     continue;
 
-                // 1) Проверяем словесные количества
+              
+
+                // 2. Пропускаем уже отформатированные строки
+                if (line.StartsWith("•"))
+                    continue;
+
+                // 3. Пропускаем строки без цифр (кроме словесных количеств)
+                bool hasDigit = Regex.IsMatch(line, @"\d");
+                bool hasWordAmount = ContainsWordAmount(line);
+
+                if (!hasDigit && !hasWordAmount)
+                    continue;
+
+                // 4. Словесные количества
                 foreach (var kv in WordAmounts)
                 {
                     if (line.Contains(kv.Key))
                     {
-                        // Оригинальная строка
-                        string original = rawLine.Trim();
-
-                        // Название — всё ДО словесной меры
-                        int idx = line.IndexOf(kv.Key);
-                        string name = line.Substring(0, idx)
-                                          .Replace("-", "")
-                                          .Replace("—", "")
-                                          .Trim();
-
+                        string name = ExtractNameBefore(line, kv.Key);
                         if (string.IsNullOrWhiteSpace(name))
-                            name = "ингредиент";
+                            name = "Ингредиент";
 
                         list.Add(new Ingredient
                         {
                             Name = Capitalize(name),
                             Weight = kv.Value,
-                            OriginalText = original
+                            OriginalText = raw.Trim()
                         });
 
                         goto NextLine;
                     }
                 }
 
-
-                // 2) Универсальный Regex для числовых значений
-                // Формат 1: "320 г муки"
+                // 5. Числовые форматы
                 var match = Regex.Match(line,
-                    @"^(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?\s*(?<name>.+)$",
+                    @"^(?<name>.+?)\s*(?<amount>\d+([.,]\d+)?|\d+/\d+)\s*(?<unit>[а-яa-z\.]+)?$",
                     RegexOptions.IgnoreCase);
-
-                // Формат 2: "мука 320 г"
-                if (!match.Success)
-                {
-                    match = Regex.Match(line,
-                        @"^(?<name>.+?)\s+(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?$",
-                        RegexOptions.IgnoreCase);
-                }
-
 
                 if (match.Success)
                 {
                     string name = Capitalize(match.Groups["name"].Value.Trim());
                     string amountStr = NormalizeAmount(match.Groups["amount"].Value);
-                    string unit = match.Groups["unit"].Value.ToLower().Trim();
+                    string unit = match.Groups["unit"].Value.Trim().ToLower();
 
                     double amount = ParseAmount(amountStr);
                     double weight = ConvertToGrams(amount, unit);
@@ -105,9 +92,8 @@ namespace MenuV2.Services
                     {
                         Name = name,
                         Weight = weight,
-                        OriginalText = rawLine.Trim()
+                        OriginalText = raw.Trim()
                     });
-
                 }
 
             NextLine:
@@ -117,31 +103,52 @@ namespace MenuV2.Services
             return list;
         }
 
+      
+
+        private static bool ContainsWordAmount(string line)
+        {
+            foreach (var kv in WordAmounts)
+                if (line.Contains(kv.Key))
+                    return true;
+            return false;
+        }
+
+        private static string ExtractNameBefore(string line, string key)
+        {
+            int idx = line.IndexOf(key);
+            if (idx <= 0)
+                return "";
+            return line.Substring(0, idx)
+                       .Replace("-", "")
+                       .Replace("—", "")
+                       .Trim();
+        }
+
         private static string NormalizeAmount(string s)
         {
-            return s
-                .Replace("½", "1/2")
-                .Replace("¼", "1/4")
-                .Replace("⅓", "1/3")
-                .Replace("⅔", "2/3")
-                .Replace(',', '.');
+            return s.Replace(",", ".")
+                    .Replace("½", "1/2")
+                    .Replace("¼", "1/4")
+                    .Replace("⅓", "1/3")
+                    .Replace("⅔", "2/3");
         }
 
         private static double ParseAmount(string s)
         {
             if (s.Contains("/"))
             {
-                var parts = s.Split('/');
-                if (parts.Length == 2 &&
-                    double.TryParse(parts[0], out double a) &&
-                    double.TryParse(parts[1], out double b))
+                var p = s.Split('/');
+                double a, b;
+                if (p.Length == 2 &&
+                    double.TryParse(p[0], out a) &&
+                    double.TryParse(p[1], out b))
                     return a / b;
             }
 
+            double val;
             double.TryParse(s, System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture, out double result);
-
-            return result;
+                System.Globalization.CultureInfo.InvariantCulture, out val);
+            return val;
         }
 
         private static double ConvertToGrams(double amount, string unit)
@@ -155,7 +162,6 @@ namespace MenuV2.Services
                     return amount;
 
                 case "кг":
-                case "килограмм":
                     return amount * 1000;
 
                 case "мл":
@@ -170,8 +176,6 @@ namespace MenuV2.Services
 
                 case "ст.л":
                 case "ст.л.":
-                case "ложка":
-                case "ложки":
                     return amount * 15;
 
                 case "ч.л":
@@ -179,12 +183,7 @@ namespace MenuV2.Services
                     return amount * 5;
 
                 case "стакан":
-                case "стакана":
                     return amount * 250;
-
-                case "пакет":
-                case "упаковка":
-                    return amount * 100;
 
                 default:
                     return amount;

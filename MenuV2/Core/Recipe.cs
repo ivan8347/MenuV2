@@ -15,6 +15,7 @@ namespace MenuV2.Core
         public string VideoUrl { get; set; }
         public string Instructions { get; set; }
         public string Category { get; set; }
+       
         public List<string> Steps { get; set; } = new List<string>();
 
 
