@@ -35,9 +35,9 @@ namespace MenuV2.Core
           public double CarbsPer100g => TotalCarbs / TotalWeight * 100;
           public double BreadUnitsPer100g => TotalBreadUnits / TotalWeight * 100;
 
-        public Recipe (string name)
+        public override string ToString()
         {
-            Name = name;
+            return Name;
         }
         public Recipe() { }   // ← добавить
 
