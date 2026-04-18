@@ -129,7 +129,7 @@ namespace MenuV2.Forms
             // Перезаписываем ингредиенты
             _recipe.Ingredients.Clear();
 
-            var parsed = IngredientParser.FromText(txtIngredients.Text);
+            var parsed = IngredientParser.FromText(txtInstructions.Text);
             foreach (var ing in parsed)
                 _recipe.Ingredients.Add(ing);
 

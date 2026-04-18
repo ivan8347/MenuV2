@@ -79,18 +79,18 @@ namespace MenuV2.Services
 
                 // 2) Универсальный Regex для числовых значений
                 // Формат 1: "320 г муки"
+                // Пробуем формат 1: "300 г муки"
                 var match = Regex.Match(line,
                     @"^(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?\s*(?<name>.+)$",
                     RegexOptions.IgnoreCase);
 
-                // Формат 2: "мука 320 г"
+                // Пробуем формат 2: "мука 300 г"
                 if (!match.Success)
                 {
                     match = Regex.Match(line,
                         @"^(?<name>.+?)\s+(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?$",
                         RegexOptions.IgnoreCase);
                 }
-
 
                 if (match.Success)
                 {
@@ -101,14 +101,22 @@ namespace MenuV2.Services
                     double amount = ParseAmount(amountStr);
                     double weight = ConvertToGrams(amount, unit);
 
-                    list.Add(new Ingredient
-                    {
-                        Name = name,
-                        Weight = weight,
-                        OriginalText = rawLine.Trim()
-                    });
+                    // Ищем продукт
+                    var product = ProductStorage.FindSimilar(name);
 
+                    Ingredient ing;
+
+                    if (product != null)
+                        ing = new Ingredient(name, weight, product);
+                    else
+                        ing = new Ingredient { Name = name, Weight = weight };
+
+                    ing.OriginalText = rawLine.Trim();
+                    list.Add(ing);
+
+                    continue;
                 }
+
 
             NextLine:
                 continue;
@@ -196,5 +204,6 @@ namespace MenuV2.Services
             if (string.IsNullOrWhiteSpace(s)) return s;
             return char.ToUpper(s[0]) + s.Substring(1);
         }
+
     }
 }

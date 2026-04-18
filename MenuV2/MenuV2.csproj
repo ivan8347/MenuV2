@@ -94,6 +94,7 @@
     <Compile Include="Core\Ingredient.cs" />
     <Compile Include="Core\InventoryItem.cs" />
     <Compile Include="Core\MenuPlanEntry.cs" />
+    <Compile Include="Core\NutrientsImporter.cs" />
     <Compile Include="Core\Product.cs" />
     <Compile Include="Core\Recipe.cs" />
     <Compile Include="Core\RecipeIngredient.cs" />
@@ -175,9 +176,7 @@
     <None Include="DATA\products.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DATA\recipes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="DATA\recipes.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

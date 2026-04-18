@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MenuV2.Core;
 using MenuV2.Forms;
 using MenuV2.Services;
 
@@ -15,6 +16,7 @@ namespace MenuV2
 
             // Если нужно – подгружаем данные перед запуском UI
             ProductStorage.Load();
+            NutrientsImporter.ImportIfProductsEmpty();
 
             Application.Run(new RecipeListForm());
         }

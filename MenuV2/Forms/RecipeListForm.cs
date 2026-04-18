@@ -10,7 +10,13 @@ namespace MenuV2.Forms
         public RecipeListForm()
         {
             InitializeComponent();
-            LoadRecipes();
+            this.Load += RecipeListForm_Load;
+        }
+        private void RecipeListForm_Load(object sender, EventArgs e)
+        {
+            ProductStorage.Load();
+            RecipeStorage.Reload();             // ← читаем JSON
+            LoadRecipes();                      // ← обновляем список
         }
 
         private void LoadRecipes()
@@ -24,7 +30,7 @@ namespace MenuV2.Forms
         {
             try
             {
-                var service = new YouTubeService("ТВОЙ_API_KEY");
+                var service = new YouTubeService("AIzaSyCYQPqDOFD99Aven7RknPBtXFrOZm95Yfc");
                 var recipe = await service.LoadRecipeFromYoutube(url);
 
                 if (recipe == null)
@@ -36,6 +42,7 @@ namespace MenuV2.Forms
                 var editor = new RecipeEditorForm(recipe);
                 if (editor.ShowDialog() == DialogResult.OK)
                 {
+                    RecipeStorage.Add(recipe);
                     RecipeStorage.Save();
                     LoadRecipes();
                 }
@@ -58,16 +65,17 @@ namespace MenuV2.Forms
             }
 
             // Иначе создаём пустой рецепт
-            var recipe = new Recipe("Новый рецепт");
-            RecipeStorage.Add(recipe);
-
+            var recipe = new Recipe();
             var editor = new RecipeEditorForm(recipe);
+
             if (editor.ShowDialog() == DialogResult.OK)
             {
+                RecipeStorage.Add(recipe);
                 RecipeStorage.Save();
                 LoadRecipes();
             }
         }
+
 
         private void btnEdit_Click(object sender, EventArgs e)
         {

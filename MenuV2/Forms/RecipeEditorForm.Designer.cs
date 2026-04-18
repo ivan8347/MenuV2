@@ -61,7 +61,7 @@
             // 
             this.picPhoto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picPhoto.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picPhoto.Location = new System.Drawing.Point(740, 6);
+            this.picPhoto.Location = new System.Drawing.Point(766, 12);
             this.picPhoto.Name = "picPhoto";
             this.picPhoto.Size = new System.Drawing.Size(200, 197);
             this.picPhoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -72,7 +72,7 @@
             // 
             this.btnSelectPhoto.AutoSize = true;
             this.btnSelectPhoto.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnSelectPhoto.Location = new System.Drawing.Point(508, 17);
+            this.btnSelectPhoto.Location = new System.Drawing.Point(411, 41);
             this.btnSelectPhoto.Name = "btnSelectPhoto";
             this.btnSelectPhoto.Size = new System.Drawing.Size(188, 39);
             this.btnSelectPhoto.TabIndex = 3;
@@ -91,7 +91,7 @@
             // 
             this.btnLoadYoutube.AutoSize = true;
             this.btnLoadYoutube.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnLoadYoutube.Location = new System.Drawing.Point(508, 109);
+            this.btnLoadYoutube.Location = new System.Drawing.Point(411, 109);
             this.btnLoadYoutube.Name = "btnLoadYoutube";
             this.btnLoadYoutube.Size = new System.Drawing.Size(139, 39);
             this.btnLoadYoutube.TabIndex = 6;
@@ -102,7 +102,7 @@
             // 
             this.txtInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.txtInstructions.Location = new System.Drawing.Point(590, 257);
+            this.txtInstructions.Location = new System.Drawing.Point(410, 254);
             this.txtInstructions.Multiline = true;
             this.txtInstructions.Name = "txtInstructions";
             this.txtInstructions.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -123,7 +123,7 @@
             // 
             this.btnParseIngredients.AutoSize = true;
             this.btnParseIngredients.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnParseIngredients.Location = new System.Drawing.Point(396, 377);
+            this.btnParseIngredients.Location = new System.Drawing.Point(769, 254);
             this.btnParseIngredients.Name = "btnParseIngredients";
             this.btnParseIngredients.Size = new System.Drawing.Size(117, 39);
             this.btnParseIngredients.TabIndex = 13;
@@ -134,7 +134,7 @@
             // 
             this.btnSave.AutoSize = true;
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnSave.Location = new System.Drawing.Point(399, 432);
+            this.btnSave.Location = new System.Drawing.Point(766, 312);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(143, 39);
             this.btnSave.TabIndex = 14;
@@ -145,7 +145,7 @@
             // 
             this.btnCancel.AutoSize = true;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnCancel.Location = new System.Drawing.Point(399, 489);
+            this.btnCancel.Location = new System.Drawing.Point(769, 368);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(114, 39);
             this.btnCancel.TabIndex = 15;
@@ -176,7 +176,7 @@
             // 
             this.lblInstructions.AutoSize = true;
             this.lblInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblInstructions.Location = new System.Drawing.Point(587, 215);
+            this.lblInstructions.Location = new System.Drawing.Point(406, 215);
             this.lblInstructions.Name = "lblInstructions";
             this.lblInstructions.Size = new System.Drawing.Size(151, 29);
             this.lblInstructions.TabIndex = 10;
@@ -212,7 +212,7 @@
             // 
             // RecipeEditorForm
             // 
-            this.ClientSize = new System.Drawing.Size(1077, 718);
+            this.ClientSize = new System.Drawing.Size(992, 718);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.picPhoto);
@@ -230,6 +230,7 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnCancel);
             this.Name = "RecipeEditorForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Редактор рецепта";
             ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).EndInit();
             this.ResumeLayout(false);
