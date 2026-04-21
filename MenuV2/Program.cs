@@ -15,8 +15,10 @@ namespace MenuV2
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Если нужно – подгружаем данные перед запуском UI
+            NutrientsImporter.ImportAndUpdateProducts();
+
+
             ProductStorage.Load();
-            NutrientsImporter.ImportIfProductsEmpty();
 
             Application.Run(new RecipeListForm());
         }

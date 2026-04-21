@@ -9,20 +9,21 @@ namespace MenuV2.Core
 {
     public class Product
     {
-        [JsonProperty("name")]
+      //  [JsonProperty("Name")]
         public string Name { get; set; }
 
-        [JsonProperty("calories")]
+        //[JsonProperty("Calories")]
         public double Calories { get; set; }
 
-        [JsonProperty("protein")]
+        //[JsonProperty("Protein")]
         public double Protein { get; set; }
 
-        [JsonProperty("fat")]
+       // [JsonProperty("Fat")]
         public double Fat { get; set; }
 
-        [JsonProperty("carbs")]
+       // [JsonProperty("Carbs")]
         public double Carbs { get; set; }
+
 
         public double BreadUnits { get; set; }
         public double PricePerKg { get; set; }
