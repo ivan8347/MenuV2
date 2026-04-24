@@ -1,117 +1,29 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
+﻿using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using MenuV2.Core;
-using Newtonsoft.Json.Linq;
+using MenuV2.Models;
 
-namespace MenuV2.Services
+public class YouTubeService
 {
-    public class YouTubeService
+    private readonly HttpClient _http = new HttpClient();
+
+    public async Task<VideoInfo> GetAsync(string url)
     {
-        private readonly string _apiKey;
+        var oembedUrl = $"https://www.youtube.com/oembed?url={url}&format=json";
+        var json = await _http.GetStringAsync(oembedUrl);
 
-        public YouTubeService(string apiKey)
+        using (var doc = JsonDocument.Parse(json))
         {
-            _apiKey = apiKey;
-        }
 
-        public string ExtractVideoId(string url)
+            var root = doc.RootElement;
+
+        return new VideoInfo
         {
-            if (string.IsNullOrWhiteSpace(url))
-                return null;
-
-            url = url.Trim();
-
-            if (url.Contains("watch?v="))
-                return url.Split(new[] { "watch?v=" }, StringSplitOptions.None)[1].Split('&')[0];
-
-            if (url.Contains("youtu.be/"))
-                return url.Split(new[] { "youtu.be/" }, StringSplitOptions.None)[1].Split('?')[0];
-
-            return null;
-        }
-
-        public async Task<Recipe> LoadRecipeFromYoutube(string url)
-        {
-            string videoId = ExtractVideoId(url);
-            if (videoId == null)
-                return null;
-
-            string apiUrl =
-                $"https://www.googleapis.com/youtube/v3/videos?id={videoId}&key={_apiKey}&part=snippet";
-
-            using (HttpClient client = new HttpClient())
-            {
-                string json;
-
-                try
-                {
-                    json = await client.GetStringAsync(apiUrl);
-                }
-                catch
-                {
-                    return null;
-                }
-
-                var data = JObject.Parse(json);
-                var snippet = data["items"]?[0]?["snippet"];
-
-                if (snippet == null)
-                    return null;
-
-                string title = snippet["title"]?.ToString();
-                string description = snippet["description"]?.ToString();
-
-                // Скачиваем фото
-                string photoPath = await DownloadThumbnail(videoId);
-
-                // Парсим ингредиенты из описания
-                var ingredients = IngredientParser.FromText(description);
-
-                return new Recipe
-                {
-                    Name = title,
-                    Instructions = description,
-                    PhotoPath = photoPath,
-                    VideoUrl = url,
-                    Ingredients = ingredients
-                };
-            }
-        }
-
-        private async Task<string> DownloadThumbnail(string videoId)
-        {
-            string[] urls =
-            {
-                $"https://img.youtube.com/vi/{videoId}/maxresdefault.jpg",
-                $"https://img.youtube.com/vi/{videoId}/hqdefault.jpg"
-            };
-
-            using (HttpClient client = new HttpClient())
-            {
-                foreach (var url in urls)
-                {
-                    try
-                    {
-                        var bytes = await client.GetByteArrayAsync(url);
-
-                        Directory.CreateDirectory("photos");
-
-                        string filePath = Path.Combine("photos", $"youtube_{videoId}.jpg");
-
-                        File.WriteAllBytes(filePath, bytes);
-
-                        return filePath;
-                    }
-                    catch
-                    {
-                        // пробуем следующий URL
-                    }
-                }
-            }
-
-            return null;
+            Platform = "youtube",
+            Title = root.GetProperty("title").GetString(),
+            ImageUrl = root.GetProperty("thumbnail_url").GetString(),
+            VideoUrl = url
+        };
         }
     }
 }

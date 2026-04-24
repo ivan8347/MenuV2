@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using MenuV2.Core;
 using MenuV2.Services;
@@ -52,6 +53,39 @@ namespace MenuV2.Forms
                 MessageBox.Show("Ошибка загрузки рецепта: " + ex.Message);
             }
         }
+        private async void LoadVkRecipe(string url)
+        {
+            try
+            {
+                if (url.Contains("vkvideo.ru"))
+                    url = url.Replace("vkvideo.ru", "vk.com");
+
+                var vk = new VkApiVideoService("access_token=vk1.a.IbzY3cptgVq2keKBPNrAb1znAQlsv4Ms5dzO5lxfAYzOu30KrCVNXC2X356Mo9ezJbjlIXQcHxIesHhXYF4CteMNJifxvajl58gwuP2buxD4fMwPGhRjmVZkvBVM7ppDvowexfQQLrjQ6h-fzrS9IpvySxuakjXFBlrX-INR5xCtRRBi69767jQv2zf_7BEFHrCG1SJJuxnJAxDm2SwTWw&expires_in=86400&user_id=1111626609");
+                var info = await vk.GetVideoAsync(url);
+
+                var recipe = new Recipe
+                {
+                    Name = info.Title,
+                    Instructions = info.Description,
+                    VideoUrl = info.VideoUrl,
+                    PhotoPath = SavePreview(info.PreviewUrl),
+                    Category = ""
+                };
+
+                recipe.Ingredients = IngredientParser.FromText(info.Description);
+
+                var editor = new RecipeEditorForm(recipe);
+                if (editor.ShowDialog() == DialogResult.OK)
+                {
+                    // обновление списка, если нужно
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки VK API: " + ex.Message);
+            }
+        }
+
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
@@ -63,7 +97,11 @@ namespace MenuV2.Forms
                 LoadYouTubeRecipe(text);
                 return;
             }
-
+            if(text.Contains("vk.com"))
+            {
+                LoadVkRecipe(text); 
+                return;
+            }
             // Иначе создаём пустой рецепт
             var recipe = new Recipe();
             var editor = new RecipeEditorForm(recipe);
@@ -107,5 +145,23 @@ namespace MenuV2.Forms
         {
             btnEdit.PerformClick();
         }
+
+        private string SavePreview(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return null;
+
+            Directory.CreateDirectory("photos");
+
+            string fileName = "vk_" + Guid.NewGuid().ToString("N") + ".jpg";
+            string path = Path.Combine("photos", fileName);
+
+            using (var client = new System.Net.WebClient())
+                client.DownloadFile(url, path);
+
+            return path;
+        }
+
+
     }
 }

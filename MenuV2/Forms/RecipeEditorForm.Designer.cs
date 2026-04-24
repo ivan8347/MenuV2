@@ -1,15 +1,15 @@
-﻿namespace MenuV2.Forms
+﻿namespace MenuV2
 {
     partial class RecipeEditorForm
     {
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.PictureBox picPhoto;
+        private System.Windows.Forms.TextBox txtTitle;
+        private System.Windows.Forms.PictureBox pictureBoxPreview;
         private System.Windows.Forms.Button btnSelectPhoto;
-        private System.Windows.Forms.TextBox txtVideo;
-        private System.Windows.Forms.Button btnLoadYoutube;
-        private System.Windows.Forms.TextBox txtInstructions;
+        private System.Windows.Forms.TextBox txtVideoUrl;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.TextBox txtIngredients;
         private System.Windows.Forms.Button btnParseIngredients;
         private System.Windows.Forms.Button btnSave;
@@ -30,12 +30,12 @@
 
         private void InitializeComponent()
         {
-            this.txtName = new System.Windows.Forms.TextBox();
-            this.picPhoto = new System.Windows.Forms.PictureBox();
+            this.txtTitle = new System.Windows.Forms.TextBox();
+            this.pictureBoxPreview = new System.Windows.Forms.PictureBox();
             this.btnSelectPhoto = new System.Windows.Forms.Button();
-            this.txtVideo = new System.Windows.Forms.TextBox();
-            this.btnLoadYoutube = new System.Windows.Forms.Button();
-            this.txtInstructions = new System.Windows.Forms.TextBox();
+            this.txtVideoUrl = new System.Windows.Forms.TextBox();
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.txtDescription = new System.Windows.Forms.TextBox();
             this.txtIngredients = new System.Windows.Forms.TextBox();
             this.btnParseIngredients = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
@@ -46,27 +46,27 @@
             this.lblIngredients = new System.Windows.Forms.Label();
             this.lblCategory = new System.Windows.Forms.Label();
             this.txtCategory = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreview)).BeginInit();
             this.SuspendLayout();
             // 
-            // txtName
+            // txtTitle
             // 
-            this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.txtName.Location = new System.Drawing.Point(20, 46);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(350, 34);
-            this.txtName.TabIndex = 0;
+            this.txtTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txtTitle.Location = new System.Drawing.Point(20, 46);
+            this.txtTitle.Name = "txtTitle";
+            this.txtTitle.Size = new System.Drawing.Size(350, 34);
+            this.txtTitle.TabIndex = 0;
             // 
-            // picPhoto
+            // pictureBoxPreview
             // 
-            this.picPhoto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.picPhoto.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picPhoto.Location = new System.Drawing.Point(766, 12);
-            this.picPhoto.Name = "picPhoto";
-            this.picPhoto.Size = new System.Drawing.Size(200, 197);
-            this.picPhoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picPhoto.TabIndex = 2;
-            this.picPhoto.TabStop = false;
+            this.pictureBoxPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxPreview.Location = new System.Drawing.Point(766, 12);
+            this.pictureBoxPreview.Name = "pictureBoxPreview";
+            this.pictureBoxPreview.Size = new System.Drawing.Size(200, 197);
+            this.pictureBoxPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxPreview.TabIndex = 2;
+            this.pictureBoxPreview.TabStop = false;
             // 
             // btnSelectPhoto
             // 
@@ -77,37 +77,35 @@
             this.btnSelectPhoto.Size = new System.Drawing.Size(188, 39);
             this.btnSelectPhoto.TabIndex = 3;
             this.btnSelectPhoto.Text = "Выбрать фото";
-            this.btnSelectPhoto.Click += new System.EventHandler(this.btnSelectPhoto_Click);
             // 
-            // txtVideo
+            // txtVideoUrl
             // 
-            this.txtVideo.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.txtVideo.Location = new System.Drawing.Point(20, 109);
-            this.txtVideo.Name = "txtVideo";
-            this.txtVideo.Size = new System.Drawing.Size(350, 34);
-            this.txtVideo.TabIndex = 4;
+            this.txtVideoUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txtVideoUrl.Location = new System.Drawing.Point(20, 109);
+            this.txtVideoUrl.Name = "txtVideoUrl";
+            this.txtVideoUrl.Size = new System.Drawing.Size(350, 34);
+            this.txtVideoUrl.TabIndex = 4;
             // 
-            // btnLoadYoutube
+            // btnLoad
             // 
-            this.btnLoadYoutube.AutoSize = true;
-            this.btnLoadYoutube.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnLoadYoutube.Location = new System.Drawing.Point(411, 109);
-            this.btnLoadYoutube.Name = "btnLoadYoutube";
-            this.btnLoadYoutube.Size = new System.Drawing.Size(139, 39);
-            this.btnLoadYoutube.TabIndex = 6;
-            this.btnLoadYoutube.Text = "Загрузить";
-            this.btnLoadYoutube.Click += new System.EventHandler(this.btnLoadYoutube_Click);
+            this.btnLoad.AutoSize = true;
+            this.btnLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnLoad.Location = new System.Drawing.Point(411, 109);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(139, 39);
+            this.btnLoad.TabIndex = 6;
+            this.btnLoad.Text = "Загрузить";
             // 
-            // txtInstructions
+            // txtDescription
             // 
-            this.txtInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.txtInstructions.Location = new System.Drawing.Point(410, 254);
-            this.txtInstructions.Multiline = true;
-            this.txtInstructions.Name = "txtInstructions";
-            this.txtInstructions.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInstructions.Size = new System.Drawing.Size(350, 405);
-            this.txtInstructions.TabIndex = 9;
+            this.txtDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txtDescription.Location = new System.Drawing.Point(410, 254);
+            this.txtDescription.Multiline = true;
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtDescription.Size = new System.Drawing.Size(350, 405);
+            this.txtDescription.TabIndex = 9;
             // 
             // txtIngredients
             // 
@@ -128,7 +126,6 @@
             this.btnParseIngredients.Size = new System.Drawing.Size(117, 39);
             this.btnParseIngredients.TabIndex = 13;
             this.btnParseIngredients.Text = "Парсить";
-            this.btnParseIngredients.Click += new System.EventHandler(this.btnParseIngredients_Click);
             // 
             // btnSave
             // 
@@ -139,7 +136,6 @@
             this.btnSave.Size = new System.Drawing.Size(143, 39);
             this.btnSave.TabIndex = 14;
             this.btnSave.Text = "Сохранить";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
@@ -150,7 +146,6 @@
             this.btnCancel.Size = new System.Drawing.Size(114, 39);
             this.btnCancel.TabIndex = 15;
             this.btnCancel.Text = "Отмена";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // lblName
             // 
@@ -213,16 +208,16 @@
             // RecipeEditorForm
             // 
             this.ClientSize = new System.Drawing.Size(992, 718);
-            this.Controls.Add(this.txtName);
+            this.Controls.Add(this.txtTitle);
             this.Controls.Add(this.lblName);
-            this.Controls.Add(this.picPhoto);
+            this.Controls.Add(this.pictureBoxPreview);
             this.Controls.Add(this.btnSelectPhoto);
-            this.Controls.Add(this.txtVideo);
+            this.Controls.Add(this.txtVideoUrl);
             this.Controls.Add(this.lblVideo);
-            this.Controls.Add(this.btnLoadYoutube);
+            this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.txtCategory);
             this.Controls.Add(this.lblCategory);
-            this.Controls.Add(this.txtInstructions);
+            this.Controls.Add(this.txtDescription);
             this.Controls.Add(this.lblInstructions);
             this.Controls.Add(this.txtIngredients);
             this.Controls.Add(this.lblIngredients);
@@ -232,7 +227,7 @@
             this.Name = "RecipeEditorForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Редактор рецепта";
-            ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

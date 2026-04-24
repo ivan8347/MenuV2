@@ -1,147 +1,62 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using MenuV2.Core;
 using MenuV2.Services;
+using MenuV2.Models;
 
-namespace MenuV2.Forms
+namespace MenuV2
 {
     public partial class RecipeEditorForm : Form
     {
-        private Recipe _recipe;
-        private string _photoPath;
+        private readonly UniversalVideoLoader _loader;
 
-        public RecipeEditorForm(Recipe recipe)
+        public RecipeEditorForm()
         {
             InitializeComponent();
-            _recipe = recipe;
-            LoadRecipe();
+
+            // ВСТАВЬ СВОЙ РАБОЧИЙ VK ТОКЕН
+            _loader = new UniversalVideoLoader("vk1.a.ТВОЙ_ТОКЕН");
         }
 
-        private void LoadRecipe()
+        private async void btnLoad_Click(object sender, EventArgs e)
         {
-            txtName.Text = _recipe.Name;
-            txtInstructions.Text = _recipe.Instructions;
-            txtVideo.Text = _recipe.VideoUrl;
-            txtCategory.Text = _recipe.Category;
+            string url = txtVideoUrl.Text.Trim();
 
-            // Ингредиенты → в текстовое поле
-            txtIngredients.Text = "";
-            foreach (var ing in _recipe.Ingredients)
-            {
-                // Вариант 1 — оригинальный текст + граммы
-
-                txtIngredients.AppendText
-               (
-                 $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
-                );
-            }
-
-
-
-            if (!string.IsNullOrEmpty(_recipe.PhotoPath) && File.Exists(_recipe.PhotoPath))
-            {
-                picPhoto.Image = Image.FromFile(_recipe.PhotoPath);
-                _photoPath = _recipe.PhotoPath;
-            }
-        }
-
-        private void btnSelectPhoto_Click(object sender, EventArgs e)
-        {
-            using (var dlg = new OpenFileDialog())
-            {
-                dlg.Filter = "Images|*.jpg;*.png;*.jpeg";
-
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-                    Directory.CreateDirectory("photos");
-
-                    string fileName = Path.GetFileName(dlg.FileName);
-                    string destPath = Path.Combine("photos", fileName);
-
-                    File.Copy(dlg.FileName, destPath, true);
-
-                    _photoPath = destPath;
-                    picPhoto.Image = Image.FromFile(destPath);
-                }
-            }
-        }
-
-        private async void btnLoadYoutube_Click(object sender, EventArgs e)
-        {
-            string url = txtVideo.Text.Trim();
             if (string.IsNullOrEmpty(url))
             {
-                MessageBox.Show("Введите ссылку на YouTube.");
+                MessageBox.Show("Введите ссылку на видео");
                 return;
             }
 
-            var service = new YouTubeService("AIzaSyCYQPqDOFD99Aven7RknPBtXFrOZm95Yfc");
-            var recipe = await service.LoadRecipeFromYoutube(url);
-
-            if (recipe == null)
+            try
             {
-                MessageBox.Show("Не удалось загрузить данные YouTube.");
-                return;
+                btnLoad.Enabled = false;
+                btnLoad.Text = "Загрузка...";
+
+                VideoInfo info = await _loader.LoadAsync(url);
+
+                // Заполняем поля
+                txtTitle.Text = info.Title;
+                txtDescription.Text = info.Description;
+               // txtImageUrl.Text = info.ImageUrl;
+
+                // Загружаем превью
+                if (!string.IsNullOrEmpty(info.ImageUrl))
+                    pictureBoxPreview.Load(info.ImageUrl);
+
+                // Сохраняем прямую ссылку на видео
+                //txtVideoFile.Text = info.VideoUrl;
+
+                MessageBox.Show($"Видео загружено ({info.Platform})");
             }
-
-            txtName.Text = recipe.Name;
-            txtInstructions.Text = recipe.Instructions;
-            txtVideo.Text = recipe.VideoUrl;
-
-            if (recipe.PhotoPath != null)
+            catch (Exception ex)
             {
-                picPhoto.Image = Image.FromFile(recipe.PhotoPath);
-                _photoPath = recipe.PhotoPath;
+                MessageBox.Show("Ошибка: " + ex.Message);
             }
-
-            txtIngredients.Text = "";
-            foreach (var ing in recipe.Ingredients)
-                txtIngredients.AppendText($"{ing.Name} — {ing.Weight} г\n");
-        }
-
-        private void btnParseIngredients_Click(object sender, EventArgs e)
-        {
-            var items = IngredientParser.FromText(txtInstructions.Text);
-
-            txtIngredients.Text = ""; // очищаем
-
-            txtIngredients.Text = "";
-            foreach (var ing in items)
+            finally
             {
-                txtIngredients.AppendText(
-                    $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
-                );
+                btnLoad.Enabled = true;
+                btnLoad.Text = "Загрузить";
             }
-
         }
-
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            _recipe.Name = txtName.Text;
-            _recipe.Instructions = txtInstructions.Text;
-            _recipe.VideoUrl = txtVideo.Text;
-            _recipe.PhotoPath = _photoPath;
-            _recipe.Category = txtCategory.Text;
-
-            // Перезаписываем ингредиенты
-            _recipe.Ingredients.Clear();
-
-            var parsed = IngredientParser.FromText(txtInstructions.Text);
-            foreach (var ing in parsed)
-                _recipe.Ingredients.Add(ing);
-
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            Close();
-        }
-
-          }
+    }
 }
