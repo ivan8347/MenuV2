@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MenuV2.Core;
 using MenuV2.Services;
+using Microsoft.Web.WebView2.Core;
 
 namespace MenuV2.Forms
 {
@@ -25,6 +28,8 @@ namespace MenuV2.Forms
             txtInstructions.Text = _recipe.Instructions;
             txtVideo.Text = _recipe.VideoUrl;
             txtCategory.Text = _recipe.Category;
+
+            MessageBox.Show(Application.ExecutablePath);
 
             // Ингредиенты → в текстовое поле
             txtIngredients.Text = "";
@@ -76,6 +81,16 @@ namespace MenuV2.Forms
                 MessageBox.Show("Введите ссылку на YouTube.");
                 return;
             }
+
+            if (url.Contains("instagram.com"))
+            {
+                webView.NavigationCompleted += WebView_NavigationCompleted;
+                await webView.EnsureCoreWebView2Async();
+                webView.Source = new Uri(url);
+                return;
+            }
+
+
 
             var service = new YouTubeService("AIzaSyCYQPqDOFD99Aven7RknPBtXFrOZm95Yfc");
             var recipe = await service.LoadRecipeFromYoutube(url);
@@ -143,5 +158,64 @@ namespace MenuV2.Forms
             Close();
         }
 
-          }
+
+
+        private async void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            // Получаем HTML из WebView2
+            string html = await webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML");
+            html = System.Text.Json.JsonSerializer.Deserialize<string>(html);
+
+            // Сохраняем HTML для анализа
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "insta.html");
+            File.WriteAllText(path, html);
+
+            // Ищем фото (Reels)
+            var imgMatch = Regex.Match(html,
+                @"""image_versions2"":\{""candidates"":
+
+\[\{""url"":""(https:[^""]+)""");
+
+            if (!imgMatch.Success)
+            {
+                imgMatch = Regex.Match(html,
+                    @"""fallback_url"":""(https:[^""]+)""");
+            }
+
+            // Ищем название
+            var titleMatch = Regex.Match(html,
+                @"""caption"":\{""text"":""(.*?)""");
+
+            // Загружаем фото
+            if (imgMatch.Success)
+            {
+                var http = new HttpClient();
+                var stream = await http.GetStreamAsync(imgMatch.Groups[1].Value);
+                picPhoto.Image = Image.FromStream(stream);
+            }
+
+            // Заполняем название
+            if (titleMatch.Success)
+            {
+                string titleRaw = titleMatch.Groups[1].Value;
+
+                // Декодируем \uXXXX
+                string title = Regex.Unescape(titleRaw);
+
+                // Декодируем HTML-сущности (&amp; → &, &quot; → ")
+                title = System.Net.WebUtility.HtmlDecode(title);
+
+                // Берём только первую строку (если нужно)
+                title = title.Split('\n')[0];
+
+                txtName.Text = title;
+            }
+
+
+
+            MessageBox.Show("Instagram загружен");
+        }
+
+
+    }
 }

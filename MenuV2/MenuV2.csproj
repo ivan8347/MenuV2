@@ -45,6 +45,15 @@
       <HintPath>..\packages\Microsoft.Playwright.1.58.0\lib\netstandard2.0\Microsoft.Playwright.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.3912.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3912.50\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.3912.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3912.50\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.3912.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3912.50\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -139,6 +148,7 @@
     <Compile Include="Services\CartService.cs" />
     <Compile Include="Services\HtmlRenderer.cs" />
     <Compile Include="Services\IngredientParser.cs" />
+    <Compile Include="Services\InstagramService.cs" />
     <Compile Include="Services\InventoryService.cs" />
     <Compile Include="Services\MenuPlannerService.cs" />
     <Compile Include="Services\MessengerService.cs" />
@@ -203,5 +213,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Playwright.1.58.0\build\Microsoft.Playwright.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Playwright.1.58.0\build\Microsoft.Playwright.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets')" />
 </Project>

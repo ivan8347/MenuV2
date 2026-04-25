@@ -46,7 +46,9 @@
             this.lblIngredients = new System.Windows.Forms.Label();
             this.lblCategory = new System.Windows.Forms.Label();
             this.txtCategory = new System.Windows.Forms.TextBox();
+            this.webView = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.webView)).BeginInit();
             this.SuspendLayout();
             // 
             // txtName
@@ -210,9 +212,22 @@
             this.txtCategory.Size = new System.Drawing.Size(350, 34);
             this.txtCategory.TabIndex = 7;
             // 
+            // webView
+            // 
+            this.webView.AllowExternalDrop = true;
+            this.webView.CreationProperties = null;
+            this.webView.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView.Location = new System.Drawing.Point(820, 470);
+            this.webView.Name = "webView";
+            this.webView.Size = new System.Drawing.Size(75, 23);
+            this.webView.TabIndex = 16;
+            this.webView.Visible = false;
+            this.webView.ZoomFactor = 1D;
+            // 
             // RecipeEditorForm
             // 
             this.ClientSize = new System.Drawing.Size(992, 718);
+            this.Controls.Add(this.webView);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.picPhoto);
@@ -233,9 +248,12 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Редактор рецепта";
             ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.webView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView;
     }
 }
