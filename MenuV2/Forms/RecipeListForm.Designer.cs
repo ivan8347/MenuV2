@@ -39,9 +39,9 @@
             this.listRecipes.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.listRecipes.FormattingEnabled = true;
             this.listRecipes.ItemHeight = 29;
-            this.listRecipes.Location = new System.Drawing.Point(12, 21);
+            this.listRecipes.Location = new System.Drawing.Point(413, 2);
             this.listRecipes.Name = "listRecipes";
-            this.listRecipes.Size = new System.Drawing.Size(375, 62);
+            this.listRecipes.Size = new System.Drawing.Size(375, 410);
             this.listRecipes.TabIndex = 0;
             this.listRecipes.DoubleClick += new System.EventHandler(this.listRecipes_DoubleClick);
             // 

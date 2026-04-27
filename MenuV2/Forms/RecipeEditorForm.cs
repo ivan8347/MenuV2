@@ -7,6 +7,9 @@ using System.Windows.Forms;
 using MenuV2.Core;
 using MenuV2.Services;
 using Microsoft.Web.WebView2.Core;
+using System.Linq;
+using System.Collections.Generic;
+
 
 namespace MenuV2.Forms
 {
@@ -29,7 +32,6 @@ namespace MenuV2.Forms
             txtVideo.Text = _recipe.VideoUrl;
             txtCategory.Text = _recipe.Category;
 
-            MessageBox.Show(Application.ExecutablePath);
 
             // Ингредиенты → в текстовое поле
             txtIngredients.Text = "";
@@ -37,10 +39,12 @@ namespace MenuV2.Forms
             {
                 // Вариант 1 — оригинальный текст + граммы
 
-                txtIngredients.AppendText
-               (
-                 $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
-                );
+                // txtIngredients.AppendText
+                //(
+                //  $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
+                // );
+                txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
+
             }
 
 
@@ -113,21 +117,21 @@ namespace MenuV2.Forms
 
             txtIngredients.Text = "";
             foreach (var ing in recipe.Ingredients)
-                txtIngredients.AppendText($"{ing.Name} — {ing.Weight} г\n");
+                //txtIngredients.AppendText($"{ing.OriginalText}\n");
+                txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
         }
 
         private void btnParseIngredients_Click(object sender, EventArgs e)
         {
             var items = IngredientParser.FromText(txtInstructions.Text);
 
-            txtIngredients.Text = ""; // очищаем
+          //  txtIngredients.Text = ""; // очищаем
 
             txtIngredients.Text = "";
             foreach (var ing in items)
             {
-                txtIngredients.AppendText(
-                    $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
-                );
+                // txtIngredients.AppendText($"{ing.OriginalText}\n");
+                txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
             }
 
         }
@@ -141,16 +145,18 @@ namespace MenuV2.Forms
             _recipe.PhotoPath = _photoPath;
             _recipe.Category = txtCategory.Text;
 
-            // Перезаписываем ингредиенты
+            // Сохраняем ингредиенты ТОЛЬКО из txtIngredients
             _recipe.Ingredients.Clear();
 
-            var parsed = IngredientParser.FromText(txtInstructions.Text);
-            foreach (var ing in parsed)
+           var items = IngredientParser.FromText(txtIngredients.Text);
+            foreach (var ing in items)
                 _recipe.Ingredients.Add(ing);
 
             DialogResult = DialogResult.OK;
             Close();
         }
+
+
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -162,59 +168,34 @@ namespace MenuV2.Forms
 
         private async void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            // Получаем HTML из WebView2
             string html = await webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML");
             html = System.Text.Json.JsonSerializer.Deserialize<string>(html);
 
-            // Сохраняем HTML для анализа
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "insta.html");
-            File.WriteAllText(path, html);
+            var data = InstagramParser.Parse(html);
+            if (data == null)
+                return;
 
-            // Ищем фото (Reels)
-            var imgMatch = Regex.Match(html,
-                @"""image_versions2"":\{""candidates"":
+            // Название
+            txtName.Text = data.Title;
 
-\[\{""url"":""(https:[^""]+)""");
-
-            if (!imgMatch.Success)
-            {
-                imgMatch = Regex.Match(html,
-                    @"""fallback_url"":""(https:[^""]+)""");
-            }
-
-            // Ищем название
-            var titleMatch = Regex.Match(html,
-                @"""caption"":\{""text"":""(.*?)""");
-
-            // Загружаем фото
-            if (imgMatch.Success)
+            // Фото
+            if (data.PhotoUrl != null)
             {
                 var http = new HttpClient();
-                var stream = await http.GetStreamAsync(imgMatch.Groups[1].Value);
+                var stream = await http.GetStreamAsync(data.PhotoUrl);
                 picPhoto.Image = Image.FromStream(stream);
             }
 
-            // Заполняем название
-            if (titleMatch.Success)
-            {
-                string titleRaw = titleMatch.Groups[1].Value;
+            // Ингредиенты
+           var ingredients = IngredientParser.FromText(data.IngredientsText);
+            txtIngredients.Text = "";
+            foreach (var ing in ingredients)
+                txtIngredients.AppendText($"{ing.OriginalText}\n");
 
-                // Декодируем \uXXXX
-                string title = Regex.Unescape(titleRaw);
-
-                // Декодируем HTML-сущности (&amp; → &, &quot; → ")
-                title = System.Net.WebUtility.HtmlDecode(title);
-
-                // Берём только первую строку (если нужно)
-                title = title.Split('\n')[0];
-
-                txtName.Text = title;
-            }
-
-
-
-            MessageBox.Show("Instagram загружен");
+            // Инструкция
+            txtInstructions.Text = data.Instructions;
         }
+
 
 
     }

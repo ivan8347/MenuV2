@@ -148,6 +148,7 @@
     <Compile Include="Services\CartService.cs" />
     <Compile Include="Services\HtmlRenderer.cs" />
     <Compile Include="Services\IngredientParser.cs" />
+    <Compile Include="Services\InstagramParser.cs" />
     <Compile Include="Services\InstagramService.cs" />
     <Compile Include="Services\InventoryService.cs" />
     <Compile Include="Services\MenuPlannerService.cs" />

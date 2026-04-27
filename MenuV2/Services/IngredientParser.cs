@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using MenuV2.Core;
 
@@ -42,20 +43,17 @@ namespace MenuV2.Services
 
             foreach (var rawLine in lines)
             {
-                string line = rawLine.Trim().ToLower();
+                string original = rawLine.Trim();
+                string line = original.ToLower();
 
                 if (line.Length < 2)
                     continue;
 
-                // 1) Проверяем словесные количества
+                // === 1. СЛОВЕСНЫЕ КОЛИЧЕСТВА ===
                 foreach (var kv in WordAmounts)
                 {
                     if (line.Contains(kv.Key))
                     {
-                        // Оригинальная строка
-                        string original = rawLine.Trim();
-
-                        // Название — всё ДО словесной меры
                         int idx = line.IndexOf(kv.Key);
                         string name = line.Substring(0, idx)
                                           .Replace("-", "")
@@ -76,15 +74,11 @@ namespace MenuV2.Services
                     }
                 }
 
-
-                // 2) Универсальный Regex для числовых значений
-                // Формат 1: "320 г муки"
-                // Пробуем формат 1: "300 г муки"
+                // === 2. ЧИСЛОВЫЕ КОЛИЧЕСТВА ===
                 var match = Regex.Match(line,
                     @"^(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?\s*(?<name>.+)$",
                     RegexOptions.IgnoreCase);
 
-                // Пробуем формат 2: "мука 300 г"
                 if (!match.Success)
                 {
                     match = Regex.Match(line,
@@ -101,26 +95,22 @@ namespace MenuV2.Services
                     double amount = ParseAmount(amountStr);
                     double weight = ConvertToGrams(amount, unit);
 
-                    // Ищем продукт
                     var product = ProductStorage.FindSimilar(name);
 
-                    Ingredient ing;
+                    Ingredient ing = product != null
+                        ? new Ingredient(name, weight, product)
+                        : new Ingredient { Name = name, Weight = weight };
 
-                    if (product != null)
-                        ing = new Ingredient(name, weight, product);
-                    else
-                        ing = new Ingredient { Name = name, Weight = weight };
-
-                    ing.OriginalText = rawLine.Trim();
+                    ing.OriginalText = original;
                     list.Add(ing);
 
                     continue;
                 }
 
-
             NextLine:
                 continue;
             }
+
 
             return list;
         }
@@ -134,6 +124,7 @@ namespace MenuV2.Services
                 .Replace("⅔", "2/3")
                 .Replace(',', '.');
         }
+       
 
         private static double ParseAmount(string s)
         {
