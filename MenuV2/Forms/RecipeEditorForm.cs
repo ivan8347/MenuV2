@@ -121,8 +121,9 @@ namespace MenuV2.Forms
                 txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
         }
 
-        private void btnParseIngredients_Click(object sender, EventArgs e)
+       /* private void btnParseIngredients_Click(object sender, EventArgs e)
         {
+            //string cleaned = Preprocess(txtInstructions.Text);
             var items = IngredientParser.FromText(txtInstructions.Text);
 
           //  txtIngredients.Text = ""; // очищаем
@@ -133,7 +134,14 @@ namespace MenuV2.Forms
                 // txtIngredients.AppendText($"{ing.OriginalText}\n");
                 txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
             }
+        }*/
+        private void btnParseIngredients_Click(object sender, EventArgs e)
+        {
+            var items = IngredientParser.FromText(txtInstructions.Text);
 
+            txtIngredients.Text = "";
+            foreach (var ing in items)
+                txtIngredients.AppendText(ing.OriginalText + Environment.NewLine);
         }
 
 

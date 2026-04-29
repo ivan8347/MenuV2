@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using MenuV2.Core;
 
@@ -8,7 +7,6 @@ namespace MenuV2.Services
 {
     public static class IngredientParser
     {
-        // Словесные количества → граммы
         private static readonly Dictionary<string, double> WordAmounts = new Dictionary<string, double>
         {
             { "щепотка", 1 },
@@ -39,6 +37,8 @@ namespace MenuV2.Services
             if (string.IsNullOrWhiteSpace(text))
                 return list;
 
+            text = Preprocess(text);
+
             var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var rawLine in lines)
@@ -55,10 +55,7 @@ namespace MenuV2.Services
                     if (line.Contains(kv.Key))
                     {
                         int idx = line.IndexOf(kv.Key);
-                        string name = line.Substring(0, idx)
-                                          .Replace("-", "")
-                                          .Replace("—", "")
-                                          .Trim();
+                        string name = line.Substring(0, idx).Trim();
 
                         if (string.IsNullOrWhiteSpace(name))
                             name = "ингредиент";
@@ -74,16 +71,21 @@ namespace MenuV2.Services
                     }
                 }
 
-                // === 2. ЧИСЛОВЫЕ КОЛИЧЕСТВА ===
+                // === 2. ЧИСЛО → ЕДИНИЦА → НАЗВАНИЕ ===
                 var match = Regex.Match(line,
-                    @"^(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?\s*(?<name>.+)$",
-                    RegexOptions.IgnoreCase);
+                    @"^(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*
+                      (?<unit>г|гр|грамм|кг|мл|л|ст\.л\.?|ч\.л\.?|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?
+                      \s*[-—]?\s*(?<name>.+)$",
+                    RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
+                // === 3. НАЗВАНИЕ → ЧИСЛО → ЕДИНИЦА ===
                 if (!match.Success)
                 {
                     match = Regex.Match(line,
-                        @"^(?<name>.+?)\s+(?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*(?<unit>г|гр|грамм|кг|мл|л|ст\.л\.|ст\.л|ч\.л\.|ч\.л|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?$",
-                        RegexOptions.IgnoreCase);
+                        @"^(?<name>.+?)\s*[-—]?\s*
+                          (?<amount>\d+([.,]\d+)?|\d+/\d+|½|¼|⅓|⅔)\s*
+                          (?<unit>г|гр|грамм|кг|мл|л|ст\.л\.?|ч\.л\.?|стакан|шт|пакет|упаковка|пучок|веточка|зубчик)?$",
+                        RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
                 }
 
                 if (match.Success)
@@ -111,8 +113,46 @@ namespace MenuV2.Services
                 continue;
             }
 
-
             return list;
+        }
+
+        // === ПРЕПРОЦЕССОР ===
+        private static string Preprocess(string text)
+        {
+            var lines = text.Split('\n');
+            var result = new List<string>();
+
+            foreach (var raw in lines)
+            {
+                string l = raw.Trim();
+
+                if (string.IsNullOrWhiteSpace(l))
+                    continue;
+
+                // игнорируем строки вида "(или 10 г сухих)"
+                if (l.StartsWith("(") && l.EndsWith(")"))
+                    continue;
+
+                // убираем маркеры списка
+                if (l.StartsWith("-"))
+                    l = l.TrimStart('-', ' ');
+
+                // убираем альтернативы в скобках
+                l = Regex.Replace(l, @"\([^)]*\)", "").Trim();
+
+                // нормализуем длинное тире
+                l = l.Replace("—", "-");
+
+                // нормализуем ложки
+                l = l.Replace("ч. л.", "ч.л.")
+                     .Replace("ст. л.", "ст.л.")
+                     .Replace("ч.л ", "ч.л.")
+                     .Replace("ст.л ", "ст.л.");
+
+                result.Add(l);
+            }
+
+            return string.Join("\n", result);
         }
 
         private static string NormalizeAmount(string s)
@@ -124,7 +164,6 @@ namespace MenuV2.Services
                 .Replace("⅔", "2/3")
                 .Replace(',', '.');
         }
-       
 
         private static double ParseAmount(string s)
         {
@@ -154,7 +193,6 @@ namespace MenuV2.Services
                     return amount;
 
                 case "кг":
-                case "килограмм":
                     return amount * 1000;
 
                 case "мл":
@@ -169,8 +207,6 @@ namespace MenuV2.Services
 
                 case "ст.л":
                 case "ст.л.":
-                case "ложка":
-                case "ложки":
                     return amount * 15;
 
                 case "ч.л":
@@ -178,7 +214,6 @@ namespace MenuV2.Services
                     return amount * 5;
 
                 case "стакан":
-                case "стакана":
                     return amount * 250;
 
                 case "пакет":
@@ -195,6 +230,5 @@ namespace MenuV2.Services
             if (string.IsNullOrWhiteSpace(s)) return s;
             return char.ToUpper(s[0]) + s.Substring(1);
         }
-
     }
 }
