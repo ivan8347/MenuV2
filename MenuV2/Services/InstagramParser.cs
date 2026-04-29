@@ -1,11 +1,14 @@
-﻿using System;
+﻿using System.Net.Http;
+using System.Text.Json;
 using System.Text.RegularExpressions;
-using MenuV2.Core;
+using System.Threading.Tasks;
 
 namespace MenuV2.Services
 {
     public static class InstagramParser
     {
+        private static readonly HttpClient client = new HttpClient();
+
         public class InstagramData
         {
             public string Title;
@@ -14,43 +17,46 @@ namespace MenuV2.Services
             public string Instructions;
         }
 
-        public static InstagramData Parse(string html)
+        public static async Task<InstagramData> ParseAsync(string url)
         {
-            var data = new InstagramData();
-
-            // === 1. CAPTION (полный, без обрезания) ===
-            // Ищем до следующей кавычки после text":
-            var captionMatch = Regex.Match(
-                html,
-                "\"caption\":\\{\"text\":\"(.*?)\",\"",
-                RegexOptions.Singleline
-            );
-
-            if (!captionMatch.Success)
+            // 1. Извлекаем shortcode
+            var match = Regex.Match(url, @"instagram\.com\/p\/([^\/]+)");
+            if (!match.Success)
                 return null;
 
-            // Декодируем JSON-экранирование
-            string caption = Regex.Unescape(captionMatch.Groups[1].Value);
+            string shortcode = match.Groups[1].Value;
 
-            // Декодируем HTML
-            caption = System.Net.WebUtility.HtmlDecode(caption);
+            // 2. Запрос к API
+            string apiUrl = "https://www.instagram.com/p/" + shortcode + "/?__a=1&__d=dis";
+            string json = await client.GetStringAsync(apiUrl);
 
-            // ВОССТАНАВЛИВАЕМ ПЕРЕНОСЫ
-            caption = caption
-                .Replace("\\n", "\n")
-                .Replace("\\r", "\r")
-                .Replace("\\t", "\t");
+            // 3. Парсим JSON (старый using)
+            using (var doc = JsonDocument.Parse(json))
+            {
+                var media = doc.RootElement
+                    .GetProperty("graphql")
+                    .GetProperty("shortcode_media");
 
-            // === 2. TITLE ===
-            data.Title = caption.Split('\n')[0].Trim();
+                // CAPTION
+                string caption =
+                    media
+                    .GetProperty("edge_media_to_caption")
+                    .GetProperty("edges")[0]
+                    .GetProperty("node")
+                    .GetProperty("text")
+                    .GetString();
 
-            // === 3. ВЕСЬ caption → в Instructions ===
-            data.Instructions = caption.Trim();
+                // PHOTO
+                string photoUrl = media.GetProperty("display_url").GetString();
 
-            // === 4. IngredientsText = весь caption ===
-            data.IngredientsText = caption.Trim();
+                InstagramData data = new InstagramData();
+                data.Title = caption.Split('\n')[0].Trim();
+                data.IngredientsText = caption.Trim();
+                data.Instructions = caption.Trim();
+                data.PhotoUrl = photoUrl;
 
-            return data;
+                return data;
+            }
         }
     }
 }

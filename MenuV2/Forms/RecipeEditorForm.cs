@@ -9,6 +9,9 @@ using MenuV2.Services;
 using Microsoft.Web.WebView2.Core;
 using System.Linq;
 using System.Collections.Generic;
+using System.Security.Policy;
+using System.Threading.Tasks;
+using System.Text;
 
 
 namespace MenuV2.Forms
@@ -88,11 +91,29 @@ namespace MenuV2.Forms
 
             if (url.Contains("instagram.com"))
             {
-                webView.NavigationCompleted += WebView_NavigationCompleted;
-                await webView.EnsureCoreWebView2Async();
-                webView.Source = new Uri(url);
+                string caption = await LoadInstagramCaptionAsync(url);
+
+                if (caption == null)
+                {
+                    MessageBox.Show("Не удалось получить данные из Instagram.");
+                    return;
+                }
+
+                // Название
+                txtName.Text = caption.Split('\n')[0].Trim();
+
+                // Инструкция
+                txtInstructions.Text = caption;
+
+                // Ингредиенты
+                var ingredients = IngredientParser.FromText(caption);
+                txtIngredients.Text = "";
+                foreach (var ing in ingredients)
+                    txtIngredients.AppendText(ing.OriginalText + Environment.NewLine);
+
                 return;
             }
+
 
 
 
@@ -165,38 +186,41 @@ namespace MenuV2.Forms
         }
 
 
-
-        private async void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        public static async Task<string> LoadInstagramCaptionAsync(string url)
         {
-            string html = await webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML");
-            html = System.Text.Json.JsonSerializer.Deserialize<string>(html);
+            // Извлекаем shortcode
+            var m = Regex.Match(url, @"instagram\.com\/(?:reel|p)\/([^\/\?]+)");
+            if (!m.Success)
+                return null;
 
-            var data = InstagramParser.Parse(html);
-            if (data == null)
-                return;
+            string shortcode = m.Groups[1].Value;
+            string embedUrl = "https://www.instagram.com/reel/" + shortcode + "/embed/captioned/";
 
-            // Название
-            txtName.Text = data.Title;
-
-            // Фото
-            if (data.PhotoUrl != null)
+            using (var http = new HttpClient())
             {
-                var http = new HttpClient();
-                var stream = await http.GetStreamAsync(data.PhotoUrl);
-                picPhoto.Image = Image.FromStream(stream);
+                http.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
+
+                // ВАЖНО: НЕ используем GetStringAsync
+                var bytes = await http.GetByteArrayAsync(embedUrl);
+
+                // Декодируем вручную, игнорируя заголовок Instagram
+                string html = Encoding.UTF8.GetString(bytes);
+
+                // Ищем caption
+                var match = Regex.Match(html, @"<meta property=""og:description"" content=""([^""]+)""");
+                if (match.Success)
+                {
+                    string caption = System.Net.WebUtility.HtmlDecode(match.Groups[1].Value);
+                    return caption;
+                }
             }
 
-            // Ингредиенты
-           var ingredients = IngredientParser.FromText(data.IngredientsText);
-            txtIngredients.Text = "";
-            foreach (var ing in ingredients)
-                txtIngredients.AppendText($"{ing.OriginalText}\n");
-
-            // Инструкция
-            txtInstructions.Text = data.Instructions;
+            return null;
         }
+
 
 
 
     }
 }
+
