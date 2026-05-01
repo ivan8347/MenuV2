@@ -225,17 +225,17 @@ namespace MenuV2.Forms
             form.StartPosition = FormStartPosition.CenterParent;
             form.FormBorderStyle = FormBorderStyle.FixedDialog;
             form.Width = 450;
-            form.Height = 200;
+            form.Height = 220; // ← увеличил высоту
 
             Label lbl = new Label();
             lbl.Text = prompt;
-            lbl.Font = new Font("Segoe UI", 14); // ← увеличенный шрифт
+            lbl.Font = new Font("Segoe UI", 14);
             lbl.AutoSize = true;
             lbl.Left = 20;
             lbl.Top = 20;
 
             TextBox box = new TextBox();
-            box.Font = new Font("Segoe UI", 14); // ← увеличенный шрифт
+            box.Font = new Font("Segoe UI", 14);
             box.Left = 20;
             box.Top = 70;
             box.Width = 390;
@@ -243,17 +243,21 @@ namespace MenuV2.Forms
             Button ok = new Button();
             ok.Text = "OK";
             ok.Font = new Font("Segoe UI", 12);
-            ok.Left = 250;
-            ok.Top = 120;
-            ok.Width = 80;
+            ok.Width = 100;
+            ok.Height = 40;
+            ok.Left = form.ClientSize.Width - ok.Width - 20; // справа
+            ok.Top = form.ClientSize.Height - ok.Height - 20; // снизу
+            ok.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             ok.DialogResult = DialogResult.OK;
 
             Button cancel = new Button();
             cancel.Text = "Отмена";
             cancel.Font = new Font("Segoe UI", 12);
-            cancel.Left = 340;
-            cancel.Top = 120;
-            cancel.Width = 80;
+            cancel.Width = 100;
+            cancel.Height = 40;
+            cancel.Left = ok.Left - cancel.Width - 10; // слева от OK
+            cancel.Top = ok.Top;
+            cancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             cancel.DialogResult = DialogResult.Cancel;
 
             form.Controls.Add(lbl);
