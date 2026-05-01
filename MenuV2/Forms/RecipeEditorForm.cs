@@ -30,7 +30,12 @@ namespace MenuV2.Forms
             txtName.Text = _recipe.Name;
             txtInstructions.Text = _recipe.Instructions;
             txtVideo.Text = _recipe.VideoUrl;
-            txtCategory.Text = _recipe.Category;
+            cmbCategory.Items.Clear();
+            cmbCategory.Items.AddRange(CategoryStorage.Categories.ToArray());
+
+            if (!string.IsNullOrEmpty(_recipe.Category))
+                cmbCategory.SelectedItem = _recipe.Category;
+
 
 
             // Ингредиенты → в текстовое поле
@@ -39,11 +44,10 @@ namespace MenuV2.Forms
             {
                 // Вариант 1 — оригинальный текст + граммы
 
-                // txtIngredients.AppendText
-                //(
-                //  $"• {ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
-                // );
-                txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
+                txtIngredients.AppendText
+               (
+                 $"{ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
+                );
 
             }
 
@@ -117,31 +121,24 @@ namespace MenuV2.Forms
 
             txtIngredients.Text = "";
             foreach (var ing in recipe.Ingredients)
-                //txtIngredients.AppendText($"{ing.OriginalText}\n");
-                txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
+
+                txtIngredients.AppendText
+                (
+                  $"{ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
+                 );
         }
 
-       /* private void btnParseIngredients_Click(object sender, EventArgs e)
-        {
-            //string cleaned = Preprocess(txtInstructions.Text);
-            var items = IngredientParser.FromText(txtInstructions.Text);
-
-          //  txtIngredients.Text = ""; // очищаем
-
-            txtIngredients.Text = "";
-            foreach (var ing in items)
-            {
-                // txtIngredients.AppendText($"{ing.OriginalText}\n");
-                txtIngredients.AppendText($"{ing.OriginalText}{Environment.NewLine}");
-            }
-        }*/
+      
         private void btnParseIngredients_Click(object sender, EventArgs e)
         {
             var items = IngredientParser.FromText(txtInstructions.Text);
 
             txtIngredients.Text = "";
             foreach (var ing in items)
-                txtIngredients.AppendText(ing.OriginalText + Environment.NewLine);
+                txtIngredients.AppendText
+               (
+                 $"{ing.OriginalText} ({ing.Weight} г){Environment.NewLine}"
+                );
         }
 
 
@@ -151,7 +148,8 @@ namespace MenuV2.Forms
             _recipe.Instructions = txtInstructions.Text;
             _recipe.VideoUrl = txtVideo.Text;
             _recipe.PhotoPath = _photoPath;
-            _recipe.Category = txtCategory.Text;
+            _recipe.Category = cmbCategory.SelectedItem?.ToString() ?? "";
+
 
             // Сохраняем ингредиенты ТОЛЬКО из txtIngredients
             _recipe.Ingredients.Clear();
@@ -204,6 +202,70 @@ namespace MenuV2.Forms
             txtInstructions.Text = data.Instructions;
         }
 
+        private void btnAddCategory_Click(object sender, EventArgs e)
+        {
+            string name = ShowInput("Новая категория", "Введите название категории:");
+
+
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            name = name.Trim();
+
+            CategoryStorage.Add(name);
+
+            cmbCategory.Items.Add(name);
+            cmbCategory.SelectedItem = name;
+        }
+
+        public static string ShowInput(string title, string prompt)
+        {
+            Form form = new Form();
+            form.Text = title;
+            form.StartPosition = FormStartPosition.CenterParent;
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.Width = 450;
+            form.Height = 200;
+
+            Label lbl = new Label();
+            lbl.Text = prompt;
+            lbl.Font = new Font("Segoe UI", 14); // ← увеличенный шрифт
+            lbl.AutoSize = true;
+            lbl.Left = 20;
+            lbl.Top = 20;
+
+            TextBox box = new TextBox();
+            box.Font = new Font("Segoe UI", 14); // ← увеличенный шрифт
+            box.Left = 20;
+            box.Top = 70;
+            box.Width = 390;
+
+            Button ok = new Button();
+            ok.Text = "OK";
+            ok.Font = new Font("Segoe UI", 12);
+            ok.Left = 250;
+            ok.Top = 120;
+            ok.Width = 80;
+            ok.DialogResult = DialogResult.OK;
+
+            Button cancel = new Button();
+            cancel.Text = "Отмена";
+            cancel.Font = new Font("Segoe UI", 12);
+            cancel.Left = 340;
+            cancel.Top = 120;
+            cancel.Width = 80;
+            cancel.DialogResult = DialogResult.Cancel;
+
+            form.Controls.Add(lbl);
+            form.Controls.Add(box);
+            form.Controls.Add(ok);
+            form.Controls.Add(cancel);
+
+            form.AcceptButton = ok;
+            form.CancelButton = cancel;
+
+            return form.ShowDialog() == DialogResult.OK ? box.Text : null;
+        }
 
 
     }

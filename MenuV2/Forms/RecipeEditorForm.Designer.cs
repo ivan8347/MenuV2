@@ -19,7 +19,6 @@
         private System.Windows.Forms.Label lblInstructions;
         private System.Windows.Forms.Label lblIngredients;
         private System.Windows.Forms.Label lblCategory;
-        private System.Windows.Forms.TextBox txtCategory;
 
         protected override void Dispose(bool disposing)
         {
@@ -45,8 +44,9 @@
             this.lblInstructions = new System.Windows.Forms.Label();
             this.lblIngredients = new System.Windows.Forms.Label();
             this.lblCategory = new System.Windows.Forms.Label();
-            this.txtCategory = new System.Windows.Forms.TextBox();
             this.webView = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.cmbCategory = new System.Windows.Forms.ComboBox();
+            this.btnAddCategory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picPhoto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.webView)).BeginInit();
             this.SuspendLayout();
@@ -204,14 +204,6 @@
             this.lblCategory.TabIndex = 8;
             this.lblCategory.Text = "Категория:";
             // 
-            // txtCategory
-            // 
-            this.txtCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.txtCategory.Location = new System.Drawing.Point(20, 172);
-            this.txtCategory.Name = "txtCategory";
-            this.txtCategory.Size = new System.Drawing.Size(350, 34);
-            this.txtCategory.TabIndex = 7;
-            // 
             // webView
             // 
             this.webView.AllowExternalDrop = true;
@@ -224,9 +216,32 @@
             this.webView.Visible = false;
             this.webView.ZoomFactor = 1D;
             // 
+            // cmbCategory
+            // 
+            this.cmbCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cmbCategory.FormattingEnabled = true;
+            this.cmbCategory.Location = new System.Drawing.Point(20, 172);
+            this.cmbCategory.Name = "cmbCategory";
+            this.cmbCategory.Size = new System.Drawing.Size(350, 37);
+            this.cmbCategory.TabIndex = 17;
+            // 
+            // btnAddCategory
+            // 
+            this.btnAddCategory.AutoSize = true;
+            this.btnAddCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnAddCategory.Location = new System.Drawing.Point(411, 172);
+            this.btnAddCategory.Name = "btnAddCategory";
+            this.btnAddCategory.Size = new System.Drawing.Size(123, 39);
+            this.btnAddCategory.TabIndex = 18;
+            this.btnAddCategory.Text = "+";
+            this.btnAddCategory.UseVisualStyleBackColor = true;
+            this.btnAddCategory.Click += new System.EventHandler(this.btnAddCategory_Click);
+            // 
             // RecipeEditorForm
             // 
             this.ClientSize = new System.Drawing.Size(992, 718);
+            this.Controls.Add(this.btnAddCategory);
+            this.Controls.Add(this.cmbCategory);
             this.Controls.Add(this.webView);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
@@ -235,7 +250,6 @@
             this.Controls.Add(this.txtVideo);
             this.Controls.Add(this.lblVideo);
             this.Controls.Add(this.btnLoadYoutube);
-            this.Controls.Add(this.txtCategory);
             this.Controls.Add(this.lblCategory);
             this.Controls.Add(this.txtInstructions);
             this.Controls.Add(this.lblInstructions);
@@ -255,5 +269,7 @@
         }
 
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
+        private System.Windows.Forms.ComboBox cmbCategory;
+        private System.Windows.Forms.Button btnAddCategory;
     }
 }
